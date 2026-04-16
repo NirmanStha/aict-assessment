@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/custom/app-sidebar";
+import { HeaderUserMenu } from "@/components/custom/header-user-menu";
 import {
   SidebarInset,
   SidebarProvider,
@@ -19,6 +20,9 @@ export default function ProtectedLayout({
           <p className="text-sm font-medium text-muted-foreground">
             Protected Workspace
           </p>
+          <div className="ml-auto">
+            <HeaderUserMenu />
+          </div>
         </header>
         <main className="flex-1 p-4">{children}</main>
       </SidebarInset>

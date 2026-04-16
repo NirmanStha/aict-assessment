@@ -2,22 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LogOut,
-  Package,
-  PencilLine,
-  Plus,
-  SquareTerminal,
-  UserRound,
-} from "lucide-react";
-import { useLogoutMutation } from "@/app/features/auth/hooks/use-auth";
+import { Package, PencilLine, SquareTerminal, UserRound } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -29,7 +19,6 @@ import {
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { logout, isPending: isLoggingOut } = useLogoutMutation();
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -37,10 +26,10 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Workspace">
-              <Link href="/">
+              <div>
                 <SquareTerminal />
                 <span>Hamro Dashboard</span>
-              </Link>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -49,10 +38,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupAction title="Create">
-            <Plus />
-            <span className="sr-only">Create</span>
-          </SidebarGroupAction>
+
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -117,21 +103,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={logout}
-              tooltip="Logout"
-              disabled={isLoggingOut}
-            >
-              <LogOut />
-              <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>
