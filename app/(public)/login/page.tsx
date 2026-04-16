@@ -1,5 +1,9 @@
-import React from "react";
+import { LoginForm } from "@/app/features/auth/component/LoginForm";
 
-export const page = () => {
-  return <div>Login Page</div>;
-};
+export default function LoginPage() {
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <LoginForm />
+    </div>
+  );
+}

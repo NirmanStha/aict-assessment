@@ -6,23 +6,13 @@ import axios, {
 
 type RetryableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://dummyjson.com";
 
 const api = axios.create({
   baseURL,
   withCredentials: true,
 });
-// Request interceptor to add the access token to headers
-api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
 
-  return config;
-});
 // Response interceptor to handle 401 errors and attempt token refresh
 api.interceptors.response.use(
   (response) => response,
@@ -37,14 +27,8 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken =
-          typeof window !== "undefined"
-            ? localStorage.getItem("refreshToken")
-            : null;
-
         const body = {
           expiresInMins: 30,
-          ...(refreshToken ? { refreshToken } : {}),
         };
 
         const refreshResponse = await axios.post(
@@ -62,16 +46,10 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
 
-        if (typeof window !== "undefined") {
-          localStorage.setItem("accessToken", newAccessToken);
-        }
-
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest as AxiosRequestConfig);
       } catch (refreshError) {
         if (typeof window !== "undefined") {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
           window.location.href = "/login";
         }
 
