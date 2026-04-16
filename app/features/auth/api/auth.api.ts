@@ -1,4 +1,4 @@
-import type { AxiosResponse } from "axios";
+import axios, { type AxiosResponse } from "axios";
 import api from "@/lib/http";
 import type {
   AuthResponse,
@@ -9,13 +9,17 @@ import type {
 
 const ACCESS_EXPIRY_MINUTES = 30;
 
+const authApi = axios.create({
+  withCredentials: true,
+});
+
 function extractData<T>(request: Promise<AxiosResponse<T>>): Promise<T> {
   return request.then((response) => response.data);
 }
 
-export function login(payload: LoginPayload): Promise<AuthResponse> {
+export function login(payload: LoginPayload): Promise<UserProfile> {
   return extractData(
-    api.post<AuthResponse>("/auth/login", {
+    authApi.post<UserProfile>("/api/auth/login", {
       username: payload.username,
       password: payload.password,
       expiresInMins: ACCESS_EXPIRY_MINUTES,
@@ -33,5 +37,5 @@ export function register(payload: RegisterPayload): Promise<AuthResponse> {
 }
 
 export function me(): Promise<UserProfile> {
-  return extractData(api.get<UserProfile>("/auth/me"));
+  return extractData(authApi.get<UserProfile>("/api/auth/me"));
 }
