@@ -7,6 +7,7 @@ import axios, {
 type RetryableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://dummyjson.com";
+const isBrowser = typeof window !== "undefined";
 
 const api = axios.create({
   baseURL,
@@ -32,7 +33,7 @@ api.interceptors.response.use(
         };
 
         const refreshResponse = await axios.post(
-          `${baseURL}/auth/refresh`,
+          isBrowser ? "/api/auth/refresh" : `${baseURL}/auth/refresh`,
           body,
           {
             headers: { "Content-Type": "application/json" },
@@ -40,13 +41,10 @@ api.interceptors.response.use(
           },
         );
 
-        const newAccessToken = refreshResponse.data?.accessToken;
-
-        if (!newAccessToken) {
+        if (!refreshResponse.data) {
           return Promise.reject(error);
         }
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest as AxiosRequestConfig);
       } catch (refreshError) {
         if (typeof window !== "undefined") {

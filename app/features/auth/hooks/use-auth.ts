@@ -7,7 +7,6 @@ import { toast } from "sonner";
 
 import type {
   ApiErrorPayload,
-  AuthResponse,
   LoginPayload,
   UserProfile,
 } from "@/app/features/auth/types/auth.types";
@@ -44,7 +43,7 @@ export function useLoginMutation() {
 
   const mutation = useMutation({
     ...loginMutationOptions(),
-    onSuccess: (data: AuthResponse) => {
+    onSuccess: (data: UserProfile) => {
       const profile: UserProfile = {
         id: data.id,
         username: data.username,
