@@ -132,38 +132,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Docs</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === "/docs"}
-                  tooltip="API Notes"
-                >
-                  <Link href="/docs">
-                    <BookOpen />
-                    <span>API Notes</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild tooltip="DummyJSON Docs">
-                  <a
-                    href="https://dummyjson.com/docs"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <BookOpen />
-                    <span>DummyJSON Docs</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
