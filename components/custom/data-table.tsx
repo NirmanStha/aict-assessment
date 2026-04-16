@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pen, Trash } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface DataTableColumn<T> {
   key: string;
@@ -35,7 +36,10 @@ interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
   getRowKey: (row: T) => string | number;
   getEditHref?: (row: T) => string;
+  editActionLabel?: string;
   onDelete?: (row: T) => void;
+  deleteDialogTitle?: string;
+  deleteActionLabel?: string;
   isDeleting?: boolean;
 }
 
@@ -44,7 +48,10 @@ export function DataTable<T>({
   columns,
   getRowKey,
   getEditHref,
+  editActionLabel = "Edit",
   onDelete,
+  deleteDialogTitle = "Delete this item?",
+  deleteActionLabel = "Delete",
   isDeleting = false,
 }: DataTableProps<T>) {
   const showActions = Boolean(getEditHref || onDelete);
@@ -72,16 +79,19 @@ export function DataTable<T>({
         {data.map((row) => (
           <TableRow key={getRowKey(row)}>
             {columns.map((column) => (
-              <TableCell key={column.key} className={column.className}>
+              <TableCell
+                key={column.key}
+                className={cn("text-center", column.className)}
+              >
                 {column.render(row)}
               </TableCell>
             ))}
             {showActions ? (
               <TableCell>
-                <div className="flex items-center gap-2">
+                <div className="flex justify-center items-center gap-2">
                   {getEditHref ? (
                     <Link href={getEditHref(row)}>
-                      <Button>
+                      <Button aria-label={editActionLabel}>
                         <Pen />
                       </Button>
                     </Link>
@@ -99,7 +109,9 @@ export function DataTable<T>({
                       </AlertDialogTrigger>
                       <AlertDialogContent size="sm">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                          <AlertDialogTitle>
+                            {deleteDialogTitle}
+                          </AlertDialogTitle>
                           <AlertDialogDescription>
                             This action cannot be undone.
                           </AlertDialogDescription>
@@ -113,7 +125,7 @@ export function DataTable<T>({
                             disabled={isDeleting}
                             onClick={() => onDelete(row)}
                           >
-                            {isDeleting ? "Deleting..." : "Delete"}
+                            {isDeleting ? "Deleting..." : deleteActionLabel}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

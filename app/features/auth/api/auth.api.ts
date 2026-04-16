@@ -39,3 +39,7 @@ export function register(payload: RegisterPayload): Promise<AuthResponse> {
 export function me(): Promise<UserProfile> {
   return extractData(authApi.get<UserProfile>("/api/auth/me"));
 }
+
+export function logout(): Promise<{ ok: boolean }> {
+  return extractData(authApi.post<{ ok: boolean }>("/api/auth/logout"));
+}

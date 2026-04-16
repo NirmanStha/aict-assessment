@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
-  BookOpen,
-  ChevronRight,
   LogOut,
   Package,
   PencilLine,
   Plus,
   SquareTerminal,
+  UserRound,
 } from "lucide-react";
+import { useLogoutMutation } from "@/app/features/auth/hooks/use-auth";
 
 import {
   Sidebar,
@@ -22,28 +22,14 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    router.push("/login");
-    router.refresh();
-  };
+  const { logout, isPending: isLoggingOut } = useLogoutMutation();
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -95,10 +81,6 @@ export function AppSidebar() {
                     <span>Posts</span>
                   </Link>
                 </SidebarMenuButton>
-                <SidebarMenuAction showOnHover>
-                  <ChevronRight />
-                  <span className="sr-only">Open posts</span>
-                </SidebarMenuAction>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
@@ -115,18 +97,21 @@ export function AppSidebar() {
                     <span>Products</span>
                   </Link>
                 </SidebarMenuButton>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/products">All products</Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/products?limit=12">Top picks</Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={
+                    pathname === "/users" || pathname.startsWith("/users/")
+                  }
+                  tooltip="Users"
+                >
+                  <Link href="/users">
+                    <UserRound />
+                    <span>Users</span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
@@ -136,9 +121,13 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
+            <SidebarMenuButton
+              onClick={logout}
+              tooltip="Logout"
+              disabled={isLoggingOut}
+            >
               <LogOut />
-              <span>Logout</span>
+              <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
