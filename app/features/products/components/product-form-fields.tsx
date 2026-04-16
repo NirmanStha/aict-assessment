@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 
 export interface ProductFormValues {
   title: string;
@@ -20,64 +21,72 @@ export function ProductFormFields({
   showPlaceholders = false,
 }: ProductFormFieldsProps) {
   return (
-    <>
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">Title</p>
+    <div className="space-y-4">
+      <Field>
+        <FieldLabel>Title</FieldLabel>
         <Input
+          className="h-10 rounded-xl border-border/80 bg-input/35"
           value={values.title}
           onChange={(event) =>
             onChange({ ...values, title: event.target.value })
           }
           placeholder={showPlaceholders ? "Product title" : undefined}
         />
-      </div>
+      </Field>
 
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">Description</p>
+      <Field>
+        <FieldLabel>Description</FieldLabel>
         <textarea
           value={values.description}
           onChange={(event) =>
             onChange({ ...values, description: event.target.value })
           }
-          className="min-h-36 w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/30"
+          className="min-h-40 w-full rounded-xl border border-border/80 bg-input/35 px-3 py-2.5 text-sm outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/30"
           placeholder={showPlaceholders ? "Product description" : undefined}
         />
-      </div>
+      </Field>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">Category</p>
+        <Field>
+          <FieldLabel>Category</FieldLabel>
           <Input
+            className="h-10 rounded-xl border-border/80 bg-input/35"
             value={values.category}
             onChange={(event) =>
               onChange({ ...values, category: event.target.value })
             }
             placeholder={showPlaceholders ? "beauty" : undefined}
           />
-        </div>
+        </Field>
 
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">Price</p>
+        <Field>
+          <FieldLabel>Price</FieldLabel>
           <Input
+            className="h-10 rounded-xl border-border/80 bg-input/35"
             value={values.price}
             onChange={(event) =>
               onChange({ ...values, price: event.target.value })
             }
             placeholder={showPlaceholders ? "199" : undefined}
           />
-        </div>
+        </Field>
 
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">Stock</p>
+        <Field>
+          <FieldLabel>Stock</FieldLabel>
           <Input
+            className="h-10 rounded-xl border-border/80 bg-input/35"
             value={values.stock}
             onChange={(event) =>
               onChange({ ...values, stock: event.target.value })
             }
             placeholder={showPlaceholders ? "25" : undefined}
           />
-        </div>
+        </Field>
       </div>
-    </>
+
+      <FieldDescription>
+        Tip: keep category concise and use numeric values for price and stock.
+      </FieldDescription>
+    </div>
   );
 }

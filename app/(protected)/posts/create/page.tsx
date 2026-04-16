@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useMeQuery } from "@/app/features/auth/hooks/use-auth";
 import {
   PostFormFields,
   type PostFormValues,
@@ -13,26 +14,26 @@ import { Button } from "@/components/ui/button";
 
 export default function CreatePostPage() {
   const router = useRouter();
+  const { data: me } = useMeQuery();
   const { mutate: createPost, isPending: isCreating } = useCreatePostMutation();
 
   const [formValues, setFormValues] = useState<PostFormValues>({
     title: "",
     body: "",
     tagsInput: "",
-    userId: "1",
   });
 
   const handleCreate = () => {
     const trimmedTitle = formValues.title.trim();
     const trimmedBody = formValues.body.trim();
-    const parsedUserId = Number(formValues.userId);
+    const parsedUserId = me?.id ?? 1;
     const tags = formValues.tagsInput
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
 
     if (!trimmedTitle || !trimmedBody || !Number.isFinite(parsedUserId)) {
-      toast.error("Please provide a valid title, body, and user id.");
+      toast.error("Please provide a valid title and body.");
       return;
     }
 
@@ -65,13 +66,15 @@ export default function CreatePostPage() {
       </Link>
 
       <h1 className="text-3xl font-semibold text-foreground">Create Post</h1>
+      <p className="text-sm text-muted-foreground">
+        Posting as {me?.username ?? "current user"}
+      </p>
 
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <PostFormFields
           values={formValues}
           onChange={setFormValues}
           showPlaceholders
-          showUserId
         />
 
         <div className="flex justify-end">
