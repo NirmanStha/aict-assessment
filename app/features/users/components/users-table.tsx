@@ -10,7 +10,9 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/custom/data-table";
+import { DataTableSkeleton } from "@/components/custom/data-table-skeleton";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const userColumns: DataTableColumn<User>[] = [
   {
@@ -45,7 +47,10 @@ export function UsersTable() {
   const pageSize = 12;
   const [page, setPage] = useState(1);
 
-  const { data, isPending, isError } = usePaginatedUsersQuery(page, pageSize);
+  const { data, isPending, isFetching, isError } = usePaginatedUsersQuery(
+    page,
+    pageSize,
+  );
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUserMutation();
 
   const totalPages = useMemo(() => {
@@ -73,7 +78,19 @@ export function UsersTable() {
   }, [data?.users.length, data?.total, page, pageSize]);
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading users...</p>;
+    return (
+      <section className="space-y-3">
+        <Skeleton className="h-4 w-72" />
+        <DataTableSkeleton columnCount={userColumns.length} />
+        <PaginationControls
+          page={page}
+          totalPages={1}
+          disabled
+          onPrevious={() => {}}
+          onNext={() => {}}
+        />
+      </section>
+    );
   }
 
   if (isError || !data) {
@@ -90,22 +107,27 @@ export function UsersTable() {
         Showing {rangeStart}-{rangeEnd} of {data.total} users from DummyJSON.
       </p>
 
-      <DataTable
-        data={data.users}
-        columns={userColumns}
-        getRowKey={(user) => user.id}
-        getEditHref={(user) => `/users/${user.id}`}
-        editActionLabel="Edit user"
-        onDelete={(user) => deleteUser(user.id)}
-        deleteDialogTitle="Delete this user?"
-        deleteActionLabel="Delete"
-        isDeleting={isDeleting}
-      />
+      {isFetching ? (
+        <DataTableSkeleton columnCount={userColumns.length} />
+      ) : (
+        <DataTable
+          data={data.users}
+          columns={userColumns}
+          getRowKey={(user) => user.id}
+          getEditHref={(user) => `/users/${user.id}`}
+          editActionLabel="Edit user"
+          onDelete={(user) => deleteUser(user.id)}
+          deleteDialogTitle="Delete this user?"
+          deleteActionLabel="Delete"
+          isDeleting={isDeleting}
+        />
+      )}
 
       <PaginationControls
         page={page}
         totalPages={totalPages}
         disabled={isPending}
+        isFetching={isFetching}
         onPrevious={() => setPage((prev) => Math.max(1, prev - 1))}
         onNext={() => setPage((prev) => Math.min(totalPages, prev + 1))}
       />

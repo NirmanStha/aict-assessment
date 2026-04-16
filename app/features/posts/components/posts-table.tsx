@@ -10,7 +10,9 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/custom/data-table";
+import { DataTableSkeleton } from "@/components/custom/data-table-skeleton";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const postColumns: DataTableColumn<Post>[] = [
   {
@@ -42,7 +44,10 @@ export function PostsTable() {
   const pageSize = 12;
   const [page, setPage] = useState(1);
 
-  const { data, isPending, isError } = usePaginatedPostsQuery(page, pageSize);
+  const { data, isPending, isFetching, isError } = usePaginatedPostsQuery(
+    page,
+    pageSize,
+  );
   const { mutate: deletePost, isPending: isDeleting } = useDeletePostMutation();
 
   const totalPages = useMemo(() => {
@@ -70,7 +75,19 @@ export function PostsTable() {
   }, [data?.posts.length, data?.total, page, pageSize]);
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading posts...</p>;
+    return (
+      <section className="space-y-3">
+        <Skeleton className="h-4 w-72" />
+        <DataTableSkeleton columnCount={postColumns.length} />
+        <PaginationControls
+          page={page}
+          totalPages={1}
+          disabled
+          onPrevious={() => {}}
+          onNext={() => {}}
+        />
+      </section>
+    );
   }
 
   if (isError || !data) {
@@ -87,19 +104,24 @@ export function PostsTable() {
         Showing {rangeStart}-{rangeEnd} of {data.total} posts from DummyJSON.
       </p>
 
-      <DataTable
-        data={data.posts}
-        columns={postColumns}
-        getRowKey={(post) => post.id}
-        getEditHref={(post) => `/posts/${post.id}`}
-        onDelete={(post) => deletePost(post.id)}
-        isDeleting={isDeleting}
-      />
+      {isFetching ? (
+        <DataTableSkeleton columnCount={postColumns.length} />
+      ) : (
+        <DataTable
+          data={data.posts}
+          columns={postColumns}
+          getRowKey={(post) => post.id}
+          getEditHref={(post) => `/posts/${post.id}`}
+          onDelete={(post) => deletePost(post.id)}
+          isDeleting={isDeleting}
+        />
+      )}
 
       <PaginationControls
         page={page}
         totalPages={totalPages}
         disabled={isPending}
+        isFetching={isFetching}
         onPrevious={() => setPage((prev) => Math.max(1, prev - 1))}
         onNext={() => setPage((prev) => Math.min(totalPages, prev + 1))}
       />

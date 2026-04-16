@@ -10,7 +10,9 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/components/custom/data-table";
+import { DataTableSkeleton } from "@/components/custom/data-table-skeleton";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const productColumns: DataTableColumn<Product>[] = [
   {
@@ -45,7 +47,7 @@ export function ProductsTable() {
   const pageSize = 12;
   const [page, setPage] = useState(1);
 
-  const { data, isPending, isError } = usePaginatedProductsQuery(
+  const { data, isPending, isFetching, isError } = usePaginatedProductsQuery(
     page,
     pageSize,
   );
@@ -77,7 +79,19 @@ export function ProductsTable() {
   }, [data?.products.length, data?.total, page, pageSize]);
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading products...</p>;
+    return (
+      <section className="space-y-3">
+        <Skeleton className="h-4 w-80" />
+        <DataTableSkeleton columnCount={productColumns.length} />
+        <PaginationControls
+          page={page}
+          totalPages={1}
+          disabled
+          onPrevious={() => {}}
+          onNext={() => {}}
+        />
+      </section>
+    );
   }
 
   if (isError || !data) {
@@ -94,22 +108,27 @@ export function ProductsTable() {
         Showing {rangeStart}-{rangeEnd} of {data.total} products from DummyJSON.
       </p>
 
-      <DataTable
-        data={data.products}
-        columns={productColumns}
-        getRowKey={(product) => product.id}
-        getEditHref={(product) => `/products/${product.id}`}
-        editActionLabel="Edit product"
-        onDelete={(product) => deleteProduct(product.id)}
-        deleteDialogTitle="Delete this product?"
-        deleteActionLabel="Delete"
-        isDeleting={isDeleting}
-      />
+      {isFetching ? (
+        <DataTableSkeleton columnCount={productColumns.length} />
+      ) : (
+        <DataTable
+          data={data.products}
+          columns={productColumns}
+          getRowKey={(product) => product.id}
+          getEditHref={(product) => `/products/${product.id}`}
+          editActionLabel="Edit product"
+          onDelete={(product) => deleteProduct(product.id)}
+          deleteDialogTitle="Delete this product?"
+          deleteActionLabel="Delete"
+          isDeleting={isDeleting}
+        />
+      )}
 
       <PaginationControls
         page={page}
         totalPages={totalPages}
         disabled={isPending}
+        isFetching={isFetching}
         onPrevious={() => setPage((prev) => Math.max(1, prev - 1))}
         onNext={() => setPage((prev) => Math.min(totalPages, prev + 1))}
       />

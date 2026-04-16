@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import {
   createProduct,
   deleteProduct,
@@ -39,6 +39,7 @@ export function paginatedProductsQueryOptions(page: number, pageSize: number) {
   return queryOptions({
     queryKey: productsKeys.list(pageSize, skip),
     queryFn: () => getProducts(pageSize, skip),
+    placeholderData: keepPreviousData,
     select: (response) => ({
       ...response,
       products: response.products.filter(

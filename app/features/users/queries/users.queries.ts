@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import {
   createUser,
   deleteUser,
@@ -34,6 +34,7 @@ export function paginatedUsersQueryOptions(page: number, pageSize: number) {
   return queryOptions({
     queryKey: usersKeys.list(pageSize, skip),
     queryFn: () => getUsers(pageSize, skip),
+    placeholderData: keepPreviousData,
     select: (response) => ({
       ...response,
       users: response.users.filter((user) => user.isDeleted !== true),
