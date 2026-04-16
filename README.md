@@ -1,3 +1,12 @@
+## Important note
+
+This project uses DummyJSON for backend API consumption.
+Create, update, and delete operations return success/fail responses but do not persist data permanently because the backend is mock-based.
+
+- Default Credintials
+  username : emilys
+  password : emilyspass
+
 ## Hamro Dashboard
 
 Hamro Dashboard is a modular Next.js dashboard application built for my assessment on aitc.
@@ -95,8 +104,3 @@ Add your repository URL before submission.
 
 Deployed application link:
 Add your deployed URL before submission.
-
-## Important note
-
-This project uses DummyJSON for backend API consumption.
-Create, update, and delete operations return success/fail responses but do not persist data permanently because the backend is mock-based.
