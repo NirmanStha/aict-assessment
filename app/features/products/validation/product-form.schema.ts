@@ -51,9 +51,10 @@ const productFormSchema = z.object({
 export type ParsedProductFormValues = z.infer<typeof productFormSchema>;
 
 function toProductFormErrors(error: z.ZodError): ProductFormErrors {
-  const fieldErrors = error
-    .flatten()
-    .fieldErrors as Record<string, string[] | undefined>;
+  const fieldErrors = error.flatten().fieldErrors as Record<
+    string,
+    string[] | undefined
+  >;
 
   return {
     title: fieldErrors.title?.[0],

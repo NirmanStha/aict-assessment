@@ -52,9 +52,10 @@ const parsedPostFormSchema = postFormSchema.transform((values) => ({
 export type ParsedPostFormValues = z.infer<typeof parsedPostFormSchema>;
 
 function toPostFormErrors(error: z.ZodError): PostFormErrors {
-  const fieldErrors = error
-    .flatten()
-    .fieldErrors as Record<string, string[] | undefined>;
+  const fieldErrors = error.flatten().fieldErrors as Record<
+    string,
+    string[] | undefined
+  >;
 
   return {
     title: fieldErrors.title?.[0],
