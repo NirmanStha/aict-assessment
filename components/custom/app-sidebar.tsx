@@ -99,7 +99,6 @@ export function AppSidebar() {
                   <ChevronRight />
                   <span className="sr-only">Open posts</span>
                 </SidebarMenuAction>
-                <SidebarMenuBadge>API</SidebarMenuBadge>
               </SidebarMenuItem>
 
               <SidebarMenuItem>

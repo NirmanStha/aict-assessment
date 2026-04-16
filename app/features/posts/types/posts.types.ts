@@ -13,3 +13,16 @@ export interface PaginatedPostsResponse {
   skip: number;
   limit: number;
 }
+
+export interface CreatePostPayload {
+  title: string;
+  body: string;
+  tags: string[];
+  userId: number;
+}
+
+export interface UpdatePostPayload {
+  title?: string;
+  body?: string;
+  tags?: string[];
+}
