@@ -2,8 +2,12 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import {
+  PostFormFields,
+  type PostFormValues,
+} from "@/app/features/posts/components/post-form-fields";
 import {
   useDeletePostMutation,
   usePostQuery,
@@ -21,7 +25,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export default function PostDetailPage() {
   const router = useRouter();
@@ -31,22 +34,24 @@ export default function PostDetailPage() {
   const { mutate: updatePost, isPending: isUpdating } = useUpdatePostMutation();
   const { mutate: deletePost, isPending: isDeleting } = useDeletePostMutation();
 
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [tagsInput, setTagsInput] = useState("");
+  const [draft, setDraft] = useState<PostFormValues | null>(null);
 
-  useEffect(() => {
-    if (!data) {
+  const formValues =
+    draft ??
+    (data
+      ? {
+          title: data.title,
+          body: data.body,
+          tagsInput: data.tags.join(", "),
+        }
+      : null);
+
+  const handleSave = () => {
+    if (!formValues) {
       return;
     }
 
-    setTitle(data.title);
-    setBody(data.body);
-    setTagsInput(data.tags.join(", "));
-  }, [data]);
-
-  const handleSave = () => {
-    const tags = tagsInput
+    const tags = formValues.tagsInput
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
@@ -55,8 +60,8 @@ export default function PostDetailPage() {
       {
         id,
         postData: {
-          title,
-          body,
+          title: formValues.title,
+          body: formValues.body,
           tags,
         },
       },
@@ -98,6 +103,10 @@ export default function PostDetailPage() {
     );
   }
 
+  if (!formValues) {
+    return <p className="text-sm text-slate-600">Preparing post form...</p>;
+  }
+
   return (
     <article className="space-y-4">
       <Link
@@ -111,32 +120,7 @@ export default function PostDetailPage() {
       <p className="text-sm text-slate-500">Views: {data.views}</p>
 
       <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Title</p>
-          <Input
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Body</p>
-          <textarea
-            value={body}
-            onChange={(event) => setBody(event.target.value)}
-            className="min-h-36 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-200"
-          />
-        </div>
-
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">
-            Tags (comma separated)
-          </p>
-          <Input
-            value={tagsInput}
-            onChange={(event) => setTagsInput(event.target.value)}
-          />
-        </div>
+        <PostFormFields values={formValues} onChange={setDraft} />
 
         <div className="flex justify-end gap-2">
           <Button

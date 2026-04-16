@@ -1,13 +1,107 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useProductQuery } from "@/app/features/products/hooks/use-products";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  ProductFormFields,
+  type ProductFormValues,
+} from "@/app/features/products/components/product-form-fields";
+import {
+  useDeleteProductMutation,
+  useProductQuery,
+  useUpdateProductMutation,
+} from "@/app/features/products/hooks/use-products";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function ProductDetailPage() {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = Number(params.id);
   const { data, isPending, isError } = useProductQuery(id);
+  const { mutate: updateProduct, isPending: isUpdating } =
+    useUpdateProductMutation();
+  const { mutate: deleteProduct, isPending: isDeleting } =
+    useDeleteProductMutation();
+
+  const [draft, setDraft] = useState<ProductFormValues | null>(null);
+
+  const formValues =
+    draft ??
+    (data
+      ? {
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          price: String(data.price),
+          stock: String(data.stock),
+        }
+      : null);
+
+  const handleSave = () => {
+    if (!formValues) {
+      return;
+    }
+
+    const trimmedTitle = formValues.title.trim();
+    const trimmedDescription = formValues.description.trim();
+    const trimmedCategory = formValues.category.trim();
+    const parsedPrice = Number(formValues.price);
+    const parsedStock = Number(formValues.stock);
+
+    if (
+      !trimmedTitle ||
+      !trimmedDescription ||
+      !trimmedCategory ||
+      !Number.isFinite(parsedPrice) ||
+      !Number.isFinite(parsedStock)
+    ) {
+      toast.error("Please provide valid product details.");
+      return;
+    }
+
+    updateProduct(
+      {
+        id,
+        productData: {
+          title: trimmedTitle,
+          description: trimmedDescription,
+          category: trimmedCategory,
+          price: parsedPrice,
+          stock: parsedStock,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Product saved successfully");
+          router.push("/products");
+        },
+        onError: () => {
+          toast.error("Failed to save product");
+        },
+      },
+    );
+  };
+
+  const handleDelete = () => {
+    deleteProduct(id, {
+      onSuccess: () => {
+        router.push("/products");
+      },
+    });
+  };
 
   if (isPending) {
     return <p className="text-sm text-slate-600">Loading product details...</p>;
@@ -27,6 +121,10 @@ export default function ProductDetailPage() {
     );
   }
 
+  if (!formValues) {
+    return <p className="text-sm text-slate-600">Preparing product form...</p>;
+  }
+
   return (
     <article className="space-y-4">
       <Link
@@ -35,20 +133,52 @@ export default function ProductDetailPage() {
       >
         Back to products
       </Link>
-      <p className="text-xs uppercase tracking-wide text-slate-500">
-        {data.category}
-      </p>
-      <h1 className="text-3xl font-semibold text-slate-900">{data.title}</h1>
-      <p className="text-base leading-7 text-slate-700">{data.description}</p>
-      <div className="grid gap-2 text-sm text-slate-600 sm:grid-cols-3">
-        <div className="rounded-lg border border-slate-200 bg-white p-3">
-          Price: ${data.price}
-        </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-3">
-          Rating: {data.rating}
-        </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-3">
-          Stock: {data.stock}
+
+      <h1 className="text-3xl font-semibold text-slate-900">Edit Product</h1>
+      <p className="text-sm text-slate-500">Rating: {data.rating}</p>
+
+      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+        <ProductFormFields values={formValues} onChange={setDraft} />
+
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            disabled={isUpdating || isDeleting}
+            onClick={handleSave}
+          >
+            {isUpdating ? "Saving..." : "Save changes"}
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                variant="destructive"
+                disabled={isUpdating || isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this product?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeleting}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  disabled={isDeleting}
+                  onClick={handleDelete}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </article>

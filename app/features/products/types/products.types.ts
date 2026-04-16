@@ -7,6 +7,7 @@ export interface Product {
   rating: number;
   stock: number;
   thumbnail: string;
+  isDeleted?: boolean;
 }
 
 export interface PaginatedProductsResponse {
@@ -14,4 +15,20 @@ export interface PaginatedProductsResponse {
   total: number;
   skip: number;
   limit: number;
+}
+
+export interface CreateProductPayload {
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  stock: number;
+}
+
+export interface UpdateProductPayload {
+  title?: string;
+  description?: string;
+  category?: string;
+  price?: number;
+  stock?: number;
 }
