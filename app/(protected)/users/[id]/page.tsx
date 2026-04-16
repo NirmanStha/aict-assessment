@@ -105,7 +105,7 @@ export default function UserDetailPage() {
   };
 
   if (isPending) {
-    return <p className="text-sm text-slate-600">Loading user details...</p>;
+    return <p className="text-sm text-muted-foreground">Loading user details...</p>;
   }
 
   if (isError || !data) {
@@ -123,22 +123,22 @@ export default function UserDetailPage() {
   }
 
   if (!formValues) {
-    return <p className="text-sm text-slate-600">Preparing user form...</p>;
+    return <p className="text-sm text-muted-foreground">Preparing user form...</p>;
   }
 
   return (
     <article className="space-y-4">
       <Link
         href="/users"
-        className="text-sm text-slate-600 underline-offset-4 hover:underline"
+        className="text-sm text-muted-foreground underline-offset-4 hover:underline"
       >
         Back to users
       </Link>
 
-      <h1 className="text-3xl font-semibold text-slate-900">Edit User</h1>
-      <p className="text-sm text-slate-500">Username: {data.username}</p>
+      <h1 className="text-3xl font-semibold text-foreground">Edit User</h1>
+      <p className="text-sm text-muted-foreground">Username: {data.username}</p>
 
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <UserFormFields values={formValues} onChange={setDraft} />
 
         <div className="flex justify-end gap-2">

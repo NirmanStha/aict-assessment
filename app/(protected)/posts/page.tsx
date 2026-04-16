@@ -6,7 +6,7 @@ export default function PostsPage() {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-semibold text-slate-900">Posts</h2>
+        <h2 className="text-2xl font-semibold text-foreground">Posts</h2>
         <Link href="/posts/create">
           <Button type="button">Create Post</Button>
         </Link>

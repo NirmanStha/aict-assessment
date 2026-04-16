@@ -86,7 +86,7 @@ export default function PostDetailPage() {
   };
 
   if (isPending) {
-    return <p className="text-sm text-slate-600">Loading post details...</p>;
+    return <p className="text-sm text-muted-foreground">Loading post details...</p>;
   }
 
   if (isError || !data) {
@@ -104,22 +104,22 @@ export default function PostDetailPage() {
   }
 
   if (!formValues) {
-    return <p className="text-sm text-slate-600">Preparing post form...</p>;
+    return <p className="text-sm text-muted-foreground">Preparing post form...</p>;
   }
 
   return (
     <article className="space-y-4">
       <Link
         href="/posts"
-        className="text-sm text-slate-600 underline-offset-4 hover:underline"
+        className="text-sm text-muted-foreground underline-offset-4 hover:underline"
       >
         Back to posts
       </Link>
 
-      <h1 className="text-3xl font-semibold text-slate-900">Edit Post</h1>
-      <p className="text-sm text-slate-500">Views: {data.views}</p>
+      <h1 className="text-3xl font-semibold text-foreground">Edit Post</h1>
+      <p className="text-sm text-muted-foreground">Views: {data.views}</p>
 
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <PostFormFields values={formValues} onChange={setDraft} />
 
         <div className="flex justify-end gap-2">

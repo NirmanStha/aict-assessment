@@ -24,7 +24,7 @@ export function UserFormFields({
     <>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">First name</p>
+          <p className="text-sm font-medium text-foreground">First name</p>
           <Input
             value={values.firstName}
             onChange={(event) =>
@@ -34,7 +34,7 @@ export function UserFormFields({
           />
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Last name</p>
+          <p className="text-sm font-medium text-foreground">Last name</p>
           <Input
             value={values.lastName}
             onChange={(event) =>
@@ -47,7 +47,7 @@ export function UserFormFields({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Email</p>
+          <p className="text-sm font-medium text-foreground">Email</p>
           <Input
             value={values.email}
             onChange={(event) =>
@@ -57,7 +57,7 @@ export function UserFormFields({
           />
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Phone</p>
+          <p className="text-sm font-medium text-foreground">Phone</p>
           <Input
             value={values.phone}
             onChange={(event) =>
@@ -70,7 +70,7 @@ export function UserFormFields({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Age</p>
+          <p className="text-sm font-medium text-foreground">Age</p>
           <Input
             value={values.age}
             onChange={(event) =>
@@ -80,7 +80,7 @@ export function UserFormFields({
           />
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">Role</p>
+          <p className="text-sm font-medium text-foreground">Role</p>
           <Input
             value={values.role}
             onChange={(event) =>

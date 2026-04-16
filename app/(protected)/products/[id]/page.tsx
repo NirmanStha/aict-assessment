@@ -104,7 +104,7 @@ export default function ProductDetailPage() {
   };
 
   if (isPending) {
-    return <p className="text-sm text-slate-600">Loading product details...</p>;
+    return <p className="text-sm text-muted-foreground">Loading product details...</p>;
   }
 
   if (isError || !data) {
@@ -122,22 +122,22 @@ export default function ProductDetailPage() {
   }
 
   if (!formValues) {
-    return <p className="text-sm text-slate-600">Preparing product form...</p>;
+    return <p className="text-sm text-muted-foreground">Preparing product form...</p>;
   }
 
   return (
     <article className="space-y-4">
       <Link
         href="/products"
-        className="text-sm text-slate-600 underline-offset-4 hover:underline"
+        className="text-sm text-muted-foreground underline-offset-4 hover:underline"
       >
         Back to products
       </Link>
 
-      <h1 className="text-3xl font-semibold text-slate-900">Edit Product</h1>
-      <p className="text-sm text-slate-500">Rating: {data.rating}</p>
+      <h1 className="text-3xl font-semibold text-foreground">Edit Product</h1>
+      <p className="text-sm text-muted-foreground">Rating: {data.rating}</p>
 
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <ProductFormFields values={formValues} onChange={setDraft} />
 
         <div className="flex justify-end gap-2">

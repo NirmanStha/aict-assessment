@@ -14,9 +14,9 @@ export default function ProtectedLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-14 items-center gap-2 border-b border-slate-200 bg-white px-4">
+        <header className="flex h-14 items-center gap-2 border-b border-border bg-card px-4">
           <SidebarTrigger className="-ml-1" />
-          <p className="text-sm font-medium text-slate-600">
+          <p className="text-sm font-medium text-muted-foreground">
             Protected Workspace
           </p>
         </header>

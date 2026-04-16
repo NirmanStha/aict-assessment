@@ -4,6 +4,7 @@ type PaginationControlsProps = {
   page: number;
   totalPages: number;
   disabled?: boolean;
+  isFetching?: boolean;
   onPrevious: () => void;
   onNext: () => void;
 };
@@ -12,20 +13,22 @@ export function PaginationControls({
   page,
   totalPages,
   disabled = false,
+  isFetching = false,
   onPrevious,
   onNext,
 }: PaginationControlsProps) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted-foreground">
         Page {page} of {totalPages}
+        {isFetching ? " • Updating..." : ""}
       </p>
       <div className="flex items-center gap-2">
         <Button
           type="button"
           variant="outline"
           size="sm"
-          disabled={disabled || page <= 1}
+          disabled={disabled || isFetching || page <= 1}
           onClick={onPrevious}
         >
           Previous
@@ -33,7 +36,7 @@ export function PaginationControls({
         <Button
           type="button"
           size="sm"
-          disabled={disabled || page >= totalPages}
+          disabled={disabled || isFetching || page >= totalPages}
           onClick={onNext}
         >
           Next

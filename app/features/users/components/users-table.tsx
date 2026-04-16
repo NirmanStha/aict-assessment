@@ -21,7 +21,7 @@ const userColumns: DataTableColumn<User>[] = [
   {
     key: "name",
     header: "Name",
-    className: "font-medium text-slate-900",
+    className: "font-medium text-foreground",
     render: (user) => `${user.firstName} ${user.lastName}`,
   },
   {
@@ -73,7 +73,7 @@ export function UsersTable() {
   }, [data?.users.length, data?.total, page, pageSize]);
 
   if (isPending) {
-    return <p className="text-sm text-slate-600">Loading users...</p>;
+    return <p className="text-sm text-muted-foreground">Loading users...</p>;
   }
 
   if (isError || !data) {
@@ -86,7 +86,7 @@ export function UsersTable() {
 
   return (
     <section className="space-y-3">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted-foreground">
         Showing {rangeStart}-{rangeEnd} of {data.total} users from DummyJSON.
       </p>
 

@@ -68,14 +68,14 @@ export default function CreateUserPage() {
     <article className="space-y-4">
       <Link
         href="/users"
-        className="text-sm text-slate-600 underline-offset-4 hover:underline"
+        className="text-sm text-muted-foreground underline-offset-4 hover:underline"
       >
         Back to users
       </Link>
 
-      <h1 className="text-3xl font-semibold text-slate-900">Create User</h1>
+      <h1 className="text-3xl font-semibold text-foreground">Create User</h1>
 
-      <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <UserFormFields
           values={formValues}
           onChange={setFormValues}

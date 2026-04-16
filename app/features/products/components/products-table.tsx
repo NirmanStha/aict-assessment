@@ -21,7 +21,7 @@ const productColumns: DataTableColumn<Product>[] = [
   {
     key: "title",
     header: "Title",
-    className: "font-medium text-slate-900",
+    className: "font-medium text-foreground",
     render: (product) => product.title,
   },
   {
@@ -77,7 +77,7 @@ export function ProductsTable() {
   }, [data?.products.length, data?.total, page, pageSize]);
 
   if (isPending) {
-    return <p className="text-sm text-slate-600">Loading products...</p>;
+    return <p className="text-sm text-muted-foreground">Loading products...</p>;
   }
 
   if (isError || !data) {
@@ -90,7 +90,7 @@ export function ProductsTable() {
 
   return (
     <section className="space-y-3">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted-foreground">
         Showing {rangeStart}-{rangeEnd} of {data.total} products from DummyJSON.
       </p>
 

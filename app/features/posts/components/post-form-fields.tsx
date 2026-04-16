@@ -23,7 +23,7 @@ export function PostFormFields({
   return (
     <>
       <div className="space-y-1">
-        <p className="text-sm font-medium text-slate-700">Title</p>
+        <p className="text-sm font-medium text-foreground">Title</p>
         <Input
           value={values.title}
           onChange={(event) =>
@@ -34,19 +34,19 @@ export function PostFormFields({
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-slate-700">Body</p>
+        <p className="text-sm font-medium text-foreground">Body</p>
         <textarea
           value={values.body}
           onChange={(event) =>
             onChange({ ...values, body: event.target.value })
           }
-          className="min-h-36 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-200"
+          className="min-h-36 w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/30"
           placeholder={showPlaceholders ? "Write the post content" : undefined}
         />
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm font-medium text-slate-700">
+        <p className="text-sm font-medium text-foreground">
           Tags (comma separated)
         </p>
         <Input
@@ -60,7 +60,7 @@ export function PostFormFields({
 
       {showUserId ? (
         <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-700">User ID</p>
+          <p className="text-sm font-medium text-foreground">User ID</p>
           <Input
             value={values.userId ?? ""}
             onChange={(event) =>

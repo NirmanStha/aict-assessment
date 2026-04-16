@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 
 import { postsKeys } from "./posts.keys";
 import {
@@ -34,6 +34,7 @@ export function paginatedPostsQueryOptions(page: number, pageSize: number) {
   return queryOptions({
     queryKey: postsKeys.list(pageSize, skip),
     queryFn: () => getPosts(pageSize, skip),
+    placeholderData: keepPreviousData,
     select: (response) => ({
       ...response,
       posts: response.posts.filter((post) => post.isDeleted !== true),

@@ -21,13 +21,13 @@ const postColumns: DataTableColumn<Post>[] = [
   {
     key: "title",
     header: "Title",
-    className: "font-medium text-slate-900",
+    className: "font-medium text-foreground",
     render: (post) => post.title,
   },
   {
     key: "body",
     header: "Body",
-    className: "max-w-xl whitespace-normal text-slate-600",
+    className: "max-w-xl whitespace-normal text-muted-foreground",
     render: (post) =>
       post.body.substring(0, 100) + (post.body.length > 50 ? "..." : ""),
   },
@@ -70,7 +70,7 @@ export function PostsTable() {
   }, [data?.posts.length, data?.total, page, pageSize]);
 
   if (isPending) {
-    return <p className="text-sm text-slate-600">Loading posts...</p>;
+    return <p className="text-sm text-muted-foreground">Loading posts...</p>;
   }
 
   if (isError || !data) {
@@ -83,7 +83,7 @@ export function PostsTable() {
 
   return (
     <section className="space-y-3">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted-foreground">
         Showing {rangeStart}-{rangeEnd} of {data.total} posts from DummyJSON.
       </p>
 
