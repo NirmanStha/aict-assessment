@@ -42,9 +42,18 @@ export function DataTable<T>({
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
-            <TableHead key={column.key}>{column.header}</TableHead>
+            <TableHead
+              key={column.key}
+              className="font-bold text-md leading-1 text-center"
+            >
+              {column.header}
+            </TableHead>
           ))}
-          {showActions ? <TableHead>Actions</TableHead> : null}
+          {showActions ? (
+            <TableHead className="font-bold text-md leading-1 text-center">
+              Actions
+            </TableHead>
+          ) : null}
         </TableRow>
       </TableHeader>
       <TableBody>
