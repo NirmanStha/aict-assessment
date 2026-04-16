@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Hamro Dashboard
 
-## Getting Started
+This is a minimal dashboard application created using Nextjs.
 
-First, run the development server:
+## Application overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project is a modular dashboard with authentication, protected routing, and CRUD style flows for posts, products, and users.
+The implementation focuses on clean feature separation, reusable UI components, and maintainable data fetching patterns.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Folder structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+app/
+Contains routes and route-level layouts.
+Includes public routes (login/register), protected routes (dashboard/posts/products/users), and API route handlers for auth.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+app/features/
+Contains domain-based feature modules.
+Each feature keeps its own api layer, hooks, queries, types, validation, and UI pieces.
 
-## Learn More
+components/
+Contains shared UI and shared custom components.
+`components/ui` holds shadcn primitives.
+`components/custom` holds reusable app-level pieces such as sidebar, table, pagination, and dashboard/header components.
 
-To learn more about Next.js, take a look at the following resources:
+lib/
+Contains common helpers such as HTTP client setup and utility functions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+proxy.ts
+Central middleware/proxy layer for route guarding and auth-aware request flow in protected/public navigation scenarios.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Pages and routing
 
-## Deploy on Vercel
+Public pages:
+`/login` and `/register`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Protected pages:
+`/` dashboard, `/posts`, `/products`, `/users`, and detail/create routes for each module.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Routing approach:
+Route groups separate public and protected experiences while sharing global layout and providers.
+
+## Feature module pattern
+
+Each feature follows the same pattern for consistency:
+
+api/
+Handles HTTP requests and response mapping.
+
+queries/
+Defines TanStack Query keys and query/mutation options.
+
+hooks/
+Exposes feature-focused hooks for pages/components.
+
+components/
+Contains feature-specific UI such as table renderers and form field sections.
+
+types/
+Keeps payload and response types close to the feature.
+
+validation/
+Uses Zod schemas for create/update form validation and parsed outputs.
+
+## Authentication flow
+
+Login:
+User submits credentials from the login form.
+Auth API returns token/profile payload.
+Profile is cached in TanStack Query and user is redirected to protected routes.
+
+Session check:
+Protected layout/pages use `useMeQuery` to fetch current user profile and keep UI auth-aware.
+
+Logout:
+Logout mutation clears auth query cache, redirects to login, and refreshes route state.
+
+Header profile menu:
+Avatar + dropdown menu uses shadcn components and exposes logout action in protected layout header.
+
+## Proxy usage
+
+`proxy.ts` is used to manage request-time route control and auth behavior between public and protected sections.
+This keeps access logic centralized instead of repeating checks inside each page.
+
+## Architecture decisions and why
+
+Feature-first organization:
+Chosen to keep business logic close to each domain and reduce cross-file coupling.
+
+TanStack Query:
+Chosen for server-state management, caching, mutation handling, and predictable invalidation.
+
+shadcn UI components:
+Chosen for consistent design primitives, accessibility-friendly base components, and faster UI composition.
+
+Zod validation in feature folders:
+Chosen for type-safe form validation and shared parse/validation logic between create and update pages.
+
+## Performance optimizations performed
+
+React Query caching:
+Avoids unnecessary refetching and keeps server state stable across page transitions.
+
+Query invalidation strategy:
+Invalidates only relevant query keys after mutations to keep updates efficient and scoped.
+
+Reusable skeleton/loading states:
+Reduces layout shifts and improves perceived performance while data is loading.
+
+Paginated data loading:
+Uses paginated queries and controlled page size to avoid large payload rendering.
+
+Component reuse and split:
+Shared table/pagination/form sections reduce duplicate render logic and improve maintainability.
