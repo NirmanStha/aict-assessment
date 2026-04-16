@@ -1,114 +1,102 @@
 ## Hamro Dashboard
 
-This is a minimal dashboard application created using Nextjs.
+Hamro Dashboard is a modular Next.js dashboard application built for my assessment on aitc.
+It includes authentication, protected routing, and CRUD style modules for posts, products, and users.
 
-## Application overview
+## Architecture summary
 
-This project is a modular dashboard with authentication, protected routing, and CRUD style flows for posts, products, and users.
-The implementation focuses on clean feature separation, reusable UI components, and maintainable data fetching patterns.
+The application follows a feature-first architecture to keep domain logic grouped and maintainable.
 
-## Folder structure
+- Routing and layouts live in app/
+- Domain logic lives in app/features/
+- Reusable UI and shared components live in components/
+- Shared utilities and HTTP client setup live in lib/
+- Access control at request/route level is handled through proxy.ts
+
+This structure keeps concerns separated between page composition, server state, API calls, and presentation components.
+
+## Folder structure and separation of concerns
 
 app/
-Contains routes and route-level layouts.
-Includes public routes (login/register), protected routes (dashboard/posts/products/users), and API route handlers for auth.
+
+- Public routes: login and register
+- Protected routes: dashboard, posts, products, users
+- Route-level layouts and API handlers
 
 app/features/
-Contains domain-based feature modules.
-Each feature keeps its own api layer, hooks, queries, types, validation, and UI pieces.
+
+- api/: request functions for each feature
+- queries/: TanStack Query keys and options
+- hooks/: reusable feature hooks for pages/components
+- components/: feature-specific UI blocks
+- types/: feature payload/response typing
+- validation/: Zod schemas and parsed form outputs
 
 components/
-Contains shared UI and shared custom components.
-`components/ui` holds shadcn primitives.
-`components/custom` holds reusable app-level pieces such as sidebar, table, pagination, and dashboard/header components.
 
-lib/
-Contains common helpers such as HTTP client setup and utility functions.
+- components/ui: shadcn UI primitives
+- components/custom: shared app components (sidebar, table, pagination, header menu, dashboard sections)
 
-proxy.ts
-Central middleware/proxy layer for route guarding and auth-aware request flow in protected/public navigation scenarios.
+## Authentication and proxy flow
 
-## Pages and routing
+Authentication flow:
 
-Public pages:
-`/login` and `/register`.
+- User logs in from public route
+- Auth response is stored and current profile is fetched with useMeQuery
+- Protected routes render only for authenticated state
+- Logout clears auth query state and redirects to login
 
-Protected pages:
-`/` dashboard, `/posts`, `/products`, `/users`, and detail/create routes for each module.
+Token lifecycle:
 
-Routing approach:
-Route groups separate public and protected experiences while sharing global layout and providers.
+- Refresh flow is integrated through auth endpoints and auth query flow
+- Session invalidation path logs user out and returns to login
 
-## Feature module pattern
+Proxy usage:
 
-Each feature follows the same pattern for consistency:
+- proxy.ts centralizes access behavior between public and protected route areas
+- This avoids repeating guard logic in every page component
 
-api/
-Handles HTTP requests and response mapping.
+## UI and UX implementation
 
-queries/
-Defines TanStack Query keys and query/mutation options.
+- Clean, responsive dashboard layout using shadcn components
+- Reusable loading indicators using skeleton states
+- Clear mutation/query error feedback using toast messaging
+- Form validation handled with feature-level Zod schemas
 
-hooks/
-Exposes feature-focused hooks for pages/components.
+## Performance optimizations
 
-components/
-Contains feature-specific UI such as table renderers and form field sections.
+- TanStack Query caching for efficient server state reuse
+- Scoped query invalidation after create/update/delete actions
+- Paginated data loading to limit payload and rendering cost
+- Reusable shared components to reduce duplication and heavy page-level code
+- Lazy user-perceived loading through skeleton states during fetch transitions
 
-types/
-Keeps payload and response types close to the feature.
+## Assessment checklist alignment
 
-validation/
-Uses Zod schemas for create/update form validation and parsed outputs.
+- Lazy loading approach: implemented via loading states and skeleton-driven rendering
+- Clean architecture and folder structure: implemented with feature-first organization
+- Separation of concerns: implemented with distinct api/hooks/queries/components/validation layers
+- Clean UI and validation/error states: implemented throughout create/update/list flows
+- Responsive design: implemented for desktop and mobile breakpoints
+- Token refresh and auto-logout path: integrated in auth flow
+- RBAC: base-ready through auth profile model, but strict role-level route restriction is not fully enforced in current scope
 
-## Authentication flow
+## Setup instructions
 
-Login:
-User submits credentials from the login form.
-Auth API returns token/profile payload.
-Profile is cached in TanStack Query and user is redirected to protected routes.
+run "npm install" to install dependencies
+run "npm run dev" to start the development server
+run "npm run lint" to check lint issues
+run "npm run build" to build the project
 
-Session check:
-Protected layout/pages use `useMeQuery` to fetch current user profile and keep UI auth-aware.
+## Submission notes
 
-Logout:
-Logout mutation clears auth query cache, redirects to login, and refreshes route state.
+GitHub repository link:
+Add your repository URL before submission.
 
-Header profile menu:
-Avatar + dropdown menu uses shadcn components and exposes logout action in protected layout header.
+Deployed application link:
+Add your deployed URL before submission.
 
-## Proxy usage
+## Important note
 
-`proxy.ts` is used to manage request-time route control and auth behavior between public and protected sections.
-This keeps access logic centralized instead of repeating checks inside each page.
-
-## Architecture decisions and why
-
-Feature-first organization:
-Chosen to keep business logic close to each domain and reduce cross-file coupling.
-
-TanStack Query:
-Chosen for server-state management, caching, mutation handling, and predictable invalidation.
-
-shadcn UI components:
-Chosen for consistent design primitives, accessibility-friendly base components, and faster UI composition.
-
-Zod validation in feature folders:
-Chosen for type-safe form validation and shared parse/validation logic between create and update pages.
-
-## Performance optimizations performed
-
-React Query caching:
-Avoids unnecessary refetching and keeps server state stable across page transitions.
-
-Query invalidation strategy:
-Invalidates only relevant query keys after mutations to keep updates efficient and scoped.
-
-Reusable skeleton/loading states:
-Reduces layout shifts and improves perceived performance while data is loading.
-
-Paginated data loading:
-Uses paginated queries and controlled page size to avoid large payload rendering.
-
-Component reuse and split:
-Shared table/pagination/form sections reduce duplicate render logic and improve maintainability.
+This project uses DummyJSON for backend API consumption.
+Create, update, and delete operations return success/fail responses but do not persist data permanently because the backend is mock-based.
