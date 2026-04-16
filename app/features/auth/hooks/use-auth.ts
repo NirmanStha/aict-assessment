@@ -35,11 +35,7 @@ function toErrorMessage(error: unknown): string {
 }
 
 export function useMeQuery() {
-  const enabled =
-    typeof window !== "undefined" &&
-    Boolean(localStorage.getItem("accessToken"));
-
-  return useQuery(meQueryOptions(enabled));
+  return useQuery(meQueryOptions(true));
 }
 
 export function useLoginMutation() {
@@ -49,9 +45,6 @@ export function useLoginMutation() {
   const mutation = useMutation({
     ...loginMutationOptions(),
     onSuccess: (data: AuthResponse) => {
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-
       const profile: UserProfile = {
         id: data.id,
         username: data.username,
