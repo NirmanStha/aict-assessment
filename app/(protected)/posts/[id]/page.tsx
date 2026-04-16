@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
+  type PostFormErrors,
   PostFormFields,
   type PostFormValues,
 } from "@/app/features/posts/components/post-form-fields";
@@ -13,6 +14,10 @@ import {
   usePostQuery,
   useUpdatePostMutation,
 } from "@/app/features/posts/hooks/use-posts";
+import {
+  parsePostForm,
+  validatePostForm,
+} from "@/app/features/posts/validation/post-form.schema";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +40,7 @@ export default function PostDetailPage() {
   const { mutate: deletePost, isPending: isDeleting } = useDeletePostMutation();
 
   const [draft, setDraft] = useState<PostFormValues | null>(null);
+  const [errors, setErrors] = useState<PostFormErrors>({});
 
   const formValues =
     draft ??
@@ -51,22 +57,26 @@ export default function PostDetailPage() {
       return;
     }
 
-    const tags = formValues.tagsInput
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean);
+    const parsed = parsePostForm(formValues);
+
+    if (!parsed.data) {
+      setErrors(parsed.errors);
+      toast.error("Please fix the highlighted fields.");
+      return;
+    }
 
     updatePost(
       {
         id,
         postData: {
-          title: formValues.title,
-          body: formValues.body,
-          tags,
+          title: parsed.data.title,
+          body: parsed.data.body,
+          tags: parsed.data.tags,
         },
       },
       {
         onSuccess: () => {
+          setErrors({});
           toast.success("Post saved successfully");
           router.push("/posts");
         },
@@ -86,7 +96,9 @@ export default function PostDetailPage() {
   };
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading post details...</p>;
+    return (
+      <p className="text-sm text-muted-foreground">Loading post details...</p>
+    );
   }
 
   if (isError || !data) {
@@ -104,7 +116,9 @@ export default function PostDetailPage() {
   }
 
   if (!formValues) {
-    return <p className="text-sm text-muted-foreground">Preparing post form...</p>;
+    return (
+      <p className="text-sm text-muted-foreground">Preparing post form...</p>
+    );
   }
 
   return (
@@ -120,7 +134,16 @@ export default function PostDetailPage() {
       <p className="text-sm text-muted-foreground">Views: {data.views}</p>
 
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
-        <PostFormFields values={formValues} onChange={setDraft} />
+        <PostFormFields
+          values={formValues}
+          onChange={(nextValues) => {
+            setDraft(nextValues);
+            if (Object.keys(errors).length > 0) {
+              setErrors(validatePostForm(nextValues));
+            }
+          }}
+          errors={errors}
+        />
 
         <div className="flex justify-end gap-2">
           <Button

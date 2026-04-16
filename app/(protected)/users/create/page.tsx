@@ -5,10 +5,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
+  type UserFormErrors,
   UserFormFields,
   type UserFormValues,
 } from "@/app/features/users/components/user-form-fields";
 import { useCreateUserMutation } from "@/app/features/users/hooks/use-users";
+import {
+  parseUserForm,
+  validateUserForm,
+} from "@/app/features/users/validation/user-form.schema";
 import { Button } from "@/components/ui/button";
 
 export default function CreateUserPage() {
@@ -23,37 +28,36 @@ export default function CreateUserPage() {
     age: "",
     role: "",
   });
+  const [errors, setErrors] = useState<UserFormErrors>({});
+
+  const handleFormChange = (nextValues: UserFormValues) => {
+    setFormValues(nextValues);
+    if (Object.keys(errors).length > 0) {
+      setErrors(validateUserForm(nextValues));
+    }
+  };
 
   const handleCreate = () => {
-    const trimmedFirstName = formValues.firstName.trim();
-    const trimmedLastName = formValues.lastName.trim();
-    const trimmedEmail = formValues.email.trim();
-    const trimmedPhone = formValues.phone.trim();
-    const trimmedRole = formValues.role.trim();
-    const parsedAge = Number(formValues.age);
+    const parsed = parseUserForm(formValues);
 
-    if (
-      !trimmedFirstName ||
-      !trimmedLastName ||
-      !trimmedEmail ||
-      !trimmedPhone ||
-      !Number.isFinite(parsedAge)
-    ) {
-      toast.error("Please provide valid user details.");
+    if (!parsed.data) {
+      setErrors(parsed.errors);
+      toast.error("Please fix the highlighted fields.");
       return;
     }
 
     createUser(
       {
-        firstName: trimmedFirstName,
-        lastName: trimmedLastName,
-        email: trimmedEmail,
-        phone: trimmedPhone,
-        age: parsedAge,
-        role: trimmedRole || undefined,
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        age: parsed.data.age,
+        role: parsed.data.role,
       },
       {
         onSuccess: (createdUser) => {
+          setErrors({});
           toast.success(`User ${createdUser.id} created successfully`);
           router.push("/users");
         },
@@ -78,7 +82,8 @@ export default function CreateUserPage() {
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         <UserFormFields
           values={formValues}
-          onChange={setFormValues}
+          onChange={handleFormChange}
+          errors={errors}
           showPlaceholders
         />
 

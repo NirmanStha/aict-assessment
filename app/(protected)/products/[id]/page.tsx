@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
+  type ProductFormErrors,
   ProductFormFields,
   type ProductFormValues,
 } from "@/app/features/products/components/product-form-fields";
@@ -13,6 +14,10 @@ import {
   useProductQuery,
   useUpdateProductMutation,
 } from "@/app/features/products/hooks/use-products";
+import {
+  parseProductForm,
+  validateProductForm,
+} from "@/app/features/products/validation/product-form.schema";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,6 +42,7 @@ export default function ProductDetailPage() {
     useDeleteProductMutation();
 
   const [draft, setDraft] = useState<ProductFormValues | null>(null);
+  const [errors, setErrors] = useState<ProductFormErrors>({});
 
   const formValues =
     draft ??
@@ -55,20 +61,11 @@ export default function ProductDetailPage() {
       return;
     }
 
-    const trimmedTitle = formValues.title.trim();
-    const trimmedDescription = formValues.description.trim();
-    const trimmedCategory = formValues.category.trim();
-    const parsedPrice = Number(formValues.price);
-    const parsedStock = Number(formValues.stock);
+    const parsed = parseProductForm(formValues);
 
-    if (
-      !trimmedTitle ||
-      !trimmedDescription ||
-      !trimmedCategory ||
-      !Number.isFinite(parsedPrice) ||
-      !Number.isFinite(parsedStock)
-    ) {
-      toast.error("Please provide valid product details.");
+    if (!parsed.data) {
+      setErrors(parsed.errors);
+      toast.error("Please fix the highlighted fields.");
       return;
     }
 
@@ -76,15 +73,16 @@ export default function ProductDetailPage() {
       {
         id,
         productData: {
-          title: trimmedTitle,
-          description: trimmedDescription,
-          category: trimmedCategory,
-          price: parsedPrice,
-          stock: parsedStock,
+          title: parsed.data.title,
+          description: parsed.data.description,
+          category: parsed.data.category,
+          price: parsed.data.price,
+          stock: parsed.data.stock,
         },
       },
       {
         onSuccess: () => {
+          setErrors({});
           toast.success("Product saved successfully");
           router.push("/products");
         },
@@ -104,7 +102,11 @@ export default function ProductDetailPage() {
   };
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading product details...</p>;
+    return (
+      <p className="text-sm text-muted-foreground">
+        Loading product details...
+      </p>
+    );
   }
 
   if (isError || !data) {
@@ -122,7 +124,9 @@ export default function ProductDetailPage() {
   }
 
   if (!formValues) {
-    return <p className="text-sm text-muted-foreground">Preparing product form...</p>;
+    return (
+      <p className="text-sm text-muted-foreground">Preparing product form...</p>
+    );
   }
 
   return (
@@ -138,7 +142,16 @@ export default function ProductDetailPage() {
       <p className="text-sm text-muted-foreground">Rating: {data.rating}</p>
 
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
-        <ProductFormFields values={formValues} onChange={setDraft} />
+        <ProductFormFields
+          values={formValues}
+          onChange={(nextValues) => {
+            setDraft(nextValues);
+            if (Object.keys(errors).length > 0) {
+              setErrors(validateProductForm(nextValues));
+            }
+          }}
+          errors={errors}
+        />
 
         <div className="flex justify-end gap-2">
           <Button

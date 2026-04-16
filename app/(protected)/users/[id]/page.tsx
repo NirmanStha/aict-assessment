@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
+  type UserFormErrors,
   UserFormFields,
   type UserFormValues,
 } from "@/app/features/users/components/user-form-fields";
@@ -13,6 +14,10 @@ import {
   useUpdateUserMutation,
   useUserQuery,
 } from "@/app/features/users/hooks/use-users";
+import {
+  parseUserForm,
+  validateUserForm,
+} from "@/app/features/users/validation/user-form.schema";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +40,7 @@ export default function UserDetailPage() {
   const { mutate: deleteUser, isPending: isDeleting } = useDeleteUserMutation();
 
   const [draft, setDraft] = useState<UserFormValues | null>(null);
+  const [errors, setErrors] = useState<UserFormErrors>({});
 
   const formValues =
     draft ??
@@ -54,21 +60,11 @@ export default function UserDetailPage() {
       return;
     }
 
-    const trimmedFirstName = formValues.firstName.trim();
-    const trimmedLastName = formValues.lastName.trim();
-    const trimmedEmail = formValues.email.trim();
-    const trimmedPhone = formValues.phone.trim();
-    const trimmedRole = formValues.role.trim();
-    const parsedAge = Number(formValues.age);
+    const parsed = parseUserForm(formValues);
 
-    if (
-      !trimmedFirstName ||
-      !trimmedLastName ||
-      !trimmedEmail ||
-      !trimmedPhone ||
-      !Number.isFinite(parsedAge)
-    ) {
-      toast.error("Please provide valid user details.");
+    if (!parsed.data) {
+      setErrors(parsed.errors);
+      toast.error("Please fix the highlighted fields.");
       return;
     }
 
@@ -76,16 +72,17 @@ export default function UserDetailPage() {
       {
         id,
         userData: {
-          firstName: trimmedFirstName,
-          lastName: trimmedLastName,
-          email: trimmedEmail,
-          phone: trimmedPhone,
-          age: parsedAge,
-          role: trimmedRole || undefined,
+          firstName: parsed.data.firstName,
+          lastName: parsed.data.lastName,
+          email: parsed.data.email,
+          phone: parsed.data.phone,
+          age: parsed.data.age,
+          role: parsed.data.role,
         },
       },
       {
         onSuccess: () => {
+          setErrors({});
           toast.success("User saved successfully");
           router.push("/users");
         },
@@ -105,7 +102,9 @@ export default function UserDetailPage() {
   };
 
   if (isPending) {
-    return <p className="text-sm text-muted-foreground">Loading user details...</p>;
+    return (
+      <p className="text-sm text-muted-foreground">Loading user details...</p>
+    );
   }
 
   if (isError || !data) {
@@ -123,7 +122,9 @@ export default function UserDetailPage() {
   }
 
   if (!formValues) {
-    return <p className="text-sm text-muted-foreground">Preparing user form...</p>;
+    return (
+      <p className="text-sm text-muted-foreground">Preparing user form...</p>
+    );
   }
 
   return (
@@ -139,7 +140,16 @@ export default function UserDetailPage() {
       <p className="text-sm text-muted-foreground">Username: {data.username}</p>
 
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
-        <UserFormFields values={formValues} onChange={setDraft} />
+        <UserFormFields
+          values={formValues}
+          onChange={(nextValues) => {
+            setDraft(nextValues);
+            if (Object.keys(errors).length > 0) {
+              setErrors(validateUserForm(nextValues));
+            }
+          }}
+          errors={errors}
+        />
 
         <div className="flex justify-end gap-2">
           <Button
