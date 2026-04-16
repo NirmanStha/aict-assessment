@@ -6,7 +6,7 @@ import axios, {
 
 type RetryableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://dummyjson.com";
 
 const api = axios.create({
   baseURL,

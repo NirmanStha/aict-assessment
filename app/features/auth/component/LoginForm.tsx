@@ -1,21 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useLoginMutation } from "../hooks/use-auth";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, isPending, errorMessage } = useLoginMutation();
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    login({ username, password });
+  };
+
   return (
     <div
       className={cn(
@@ -24,7 +38,7 @@ export function LoginForm({
       )}
       {...props}
     >
-      <form className="space-y-5 min-w-80">
+      <form className="space-y-5 min-w-80" onSubmit={handleSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-3 text-center">
             <div className="flex size-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm">
@@ -41,12 +55,14 @@ export function LoginForm({
           <FieldSeparator className="my-2" />
 
           <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <FieldLabel htmlFor="username">username</FieldLabel>
             <Input
-              id="email"
-              type="email"
-              placeholder="you@company.com"
+              id="username"
+              type="text"
+              placeholder="Enter your username"
               required
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
               className="h-11 rounded-xl border-slate-300 bg-white"
             />
           </Field>
@@ -60,16 +76,21 @@ export function LoginForm({
               type="password"
               placeholder="Enter your password"
               required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               className="h-11 rounded-xl border-slate-300 bg-white"
             />
           </Field>
 
+          {errorMessage ? <FieldError>{errorMessage}</FieldError> : null}
+
           <Field className="pt-2">
             <Button
               type="submit"
+              disabled={isPending}
               className="h-11 w-full rounded-xl bg-slate-900 text-white hover:bg-slate-800"
             >
-              Sign in
+              {isPending ? "Signing in..." : "Sign in"}
             </Button>
           </Field>
 
