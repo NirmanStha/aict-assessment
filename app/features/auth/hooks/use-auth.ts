@@ -11,7 +11,11 @@ import type {
   UserProfile,
 } from "@/app/features/auth/types/auth.types";
 import { authKeys } from "../queries/auth.keys";
-import { loginMutationOptions, meQueryOptions } from "../queries/auth.queries";
+import {
+  loginMutationOptions,
+  logoutMutationOptions,
+  meQueryOptions,
+} from "../queries/auth.queries";
 
 function toErrorMessage(error: unknown): string {
   if (error instanceof AxiosError) {
@@ -67,5 +71,27 @@ export function useLoginMutation() {
     ...mutation,
     errorMessage: mutation.error ? toErrorMessage(mutation.error) : "",
     login: (payload: LoginPayload) => mutation.mutate(payload),
+  };
+}
+
+export function useLogoutMutation() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const mutation = useMutation({
+    ...logoutMutationOptions(),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: authKeys.all });
+      router.push("/login");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(toErrorMessage(error));
+    },
+  });
+
+  return {
+    ...mutation,
+    logout: () => mutation.mutate(),
   };
 }

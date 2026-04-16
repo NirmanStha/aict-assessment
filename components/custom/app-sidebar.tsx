@@ -1,49 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  BookOpen,
-  ChevronRight,
-  LogOut,
-  Package,
-  PencilLine,
-  Plus,
-  SquareTerminal,
-} from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Package, PencilLine, SquareTerminal, UserRound } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuAction,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    router.push("/login");
-    router.refresh();
-  };
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -51,10 +26,10 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Workspace">
-              <Link href="/">
+              <div>
                 <SquareTerminal />
                 <span>Hamro Dashboard</span>
-              </Link>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -63,10 +38,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupAction title="Create">
-            <Plus />
-            <span className="sr-only">Create</span>
-          </SidebarGroupAction>
+
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -95,11 +67,6 @@ export function AppSidebar() {
                     <span>Posts</span>
                   </Link>
                 </SidebarMenuButton>
-                <SidebarMenuAction showOnHover>
-                  <ChevronRight />
-                  <span className="sr-only">Open posts</span>
-                </SidebarMenuAction>
-                <SidebarMenuBadge>API</SidebarMenuBadge>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
@@ -116,34 +83,26 @@ export function AppSidebar() {
                     <span>Products</span>
                   </Link>
                 </SidebarMenuButton>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/products">All products</Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/products?limit=12">Top picks</Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={
+                    pathname === "/users" || pathname.startsWith("/users/")
+                  }
+                  tooltip="Users"
+                >
+                  <Link href="/users">
+                    <UserRound />
+                    <span>Users</span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
-              <LogOut />
-              <span>Logout</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
 
       <SidebarRail />
     </Sidebar>

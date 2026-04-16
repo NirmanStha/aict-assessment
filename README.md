@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Hamro Dashboard
 
-## Getting Started
+Hamro Dashboard is a modular Next.js dashboard application built for my assessment on aitc.
+It includes authentication, protected routing, and CRUD style modules for posts, products, and users.
 
-First, run the development server:
+## Architecture summary
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The application follows a feature-first architecture to keep domain logic grouped and maintainable.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Routing and layouts live in app/
+- Domain logic lives in app/features/
+- Reusable UI and shared components live in components/
+- Shared utilities and HTTP client setup live in lib/
+- Access control at request/route level is handled through proxy.ts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This structure keeps concerns separated between page composition, server state, API calls, and presentation components.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Folder structure and separation of concerns
 
-## Learn More
+app/
 
-To learn more about Next.js, take a look at the following resources:
+- Public routes: login and register
+- Protected routes: dashboard, posts, products, users
+- Route-level layouts and API handlers
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+app/features/
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- api/: request functions for each feature
+- queries/: TanStack Query keys and options
+- hooks/: reusable feature hooks for pages/components
+- components/: feature-specific UI blocks
+- types/: feature payload/response typing
+- validation/: Zod schemas and parsed form outputs
 
-## Deploy on Vercel
+components/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- components/ui: shadcn UI primitives
+- components/custom: shared app components (sidebar, table, pagination, header menu, dashboard sections)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Authentication and proxy flow
+
+Authentication flow:
+
+- User logs in from public route
+- Auth response is stored and current profile is fetched with useMeQuery
+- Protected routes render only for authenticated state
+- Logout clears auth query state and redirects to login
+
+Token lifecycle:
+
+- Refresh flow is integrated through auth endpoints and auth query flow
+- Session invalidation path logs user out and returns to login
+
+Proxy usage:
+
+- proxy.ts centralizes access behavior between public and protected route areas
+- This avoids repeating guard logic in every page component
+
+## UI and UX implementation
+
+- Clean, responsive dashboard layout using shadcn components
+- Reusable loading indicators using skeleton states
+- Clear mutation/query error feedback using toast messaging
+- Form validation handled with feature-level Zod schemas
+
+## Performance optimizations
+
+- TanStack Query caching for efficient server state reuse
+- Scoped query invalidation after create/update/delete actions
+- Paginated data loading to limit payload and rendering cost
+- Reusable shared components to reduce duplication and heavy page-level code
+- Lazy user-perceived loading through skeleton states during fetch transitions
+
+## Assessment checklist alignment
+
+- Lazy loading approach: implemented via loading states and skeleton-driven rendering
+- Clean architecture and folder structure: implemented with feature-first organization
+- Separation of concerns: implemented with distinct api/hooks/queries/components/validation layers
+- Clean UI and validation/error states: implemented throughout create/update/list flows
+- Responsive design: implemented for desktop and mobile breakpoints
+- Token refresh and auto-logout path: integrated in auth flow
+- RBAC: base-ready through auth profile model, but strict role-level route restriction is not fully enforced in current scope
+
+## Setup instructions
+
+run "npm install" to install dependencies
+run "npm run dev" to start the development server
+run "npm run lint" to check lint issues
+run "npm run build" to build the project
+
+## Submission notes
+
+GitHub repository link:
+Add your repository URL before submission.
+
+Deployed application link:
+Add your deployed URL before submission.
+
+## Important note
+
+This project uses DummyJSON for backend API consumption.
+Create, update, and delete operations return success/fail responses but do not persist data permanently because the backend is mock-based.

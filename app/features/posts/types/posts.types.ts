@@ -5,6 +5,8 @@ export interface Post {
   tags: string[];
   userId: number;
   views: number;
+  isDeleted?: boolean;
+  deletedOn?: string;
 }
 
 export interface PaginatedPostsResponse {
@@ -12,4 +14,17 @@ export interface PaginatedPostsResponse {
   total: number;
   skip: number;
   limit: number;
+}
+
+export interface CreatePostPayload {
+  title: string;
+  body: string;
+  tags: string[];
+  userId: number;
+}
+
+export interface UpdatePostPayload {
+  title?: string;
+  body?: string;
+  tags?: string[];
 }

@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { login, me, register } from "../api/auth.api";
+import { login, logout, me, register } from "../api/auth.api";
 import type {
   LoginPayload,
   RegisterPayload,
@@ -25,5 +25,11 @@ export function loginMutationOptions() {
 export function registerMutationOptions() {
   return mutationOptions({
     mutationFn: (payload: RegisterPayload) => register(payload),
+  });
+}
+
+export function logoutMutationOptions() {
+  return mutationOptions({
+    mutationFn: logout,
   });
 }

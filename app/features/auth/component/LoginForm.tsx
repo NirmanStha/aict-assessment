@@ -33,7 +33,7 @@ export function LoginForm({
   return (
     <div
       className={cn(
-        "rounded-2xl border w-125 border-slate-200/80 bg-white/90 p-6  shadow-xl shadow-slate-300/30 backdrop-blur sm:p-8",
+        "rounded-2xl border w-125 border-border/80 bg-card/90 p-6  shadow-xl shadow-slate-300/30 backdrop-blur sm:p-8",
         className,
       )}
       {...props}
@@ -44,10 +44,10 @@ export function LoginForm({
             <div className="flex size-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm">
               <GalleryVerticalEnd className="size-5" />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               Welcome back
             </h1>
-            <FieldDescription className="text-slate-600">
+            <FieldDescription className="text-muted-foreground">
               Sign in to continue to Hamro Dashboard
             </FieldDescription>
           </div>
@@ -63,7 +63,7 @@ export function LoginForm({
               required
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              className="h-11 rounded-xl border-slate-300 bg-white"
+              className="h-11 rounded-xl border-border bg-card"
             />
           </Field>
 
@@ -78,7 +78,7 @@ export function LoginForm({
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="h-11 rounded-xl border-slate-300 bg-white"
+              className="h-11 rounded-xl border-border bg-card"
             />
           </Field>
 
@@ -94,11 +94,11 @@ export function LoginForm({
             </Button>
           </Field>
 
-          <FieldDescription className="pt-1 text-center text-sm text-slate-600">
+          <FieldDescription className="pt-1 text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
               href="/register"
-              className="font-medium text-slate-900 underline-offset-4 hover:underline"
+              className="font-medium text-foreground underline-offset-4 hover:underline"
             >
               Create one
             </Link>
@@ -106,7 +106,7 @@ export function LoginForm({
         </FieldGroup>
       </form>
 
-      <FieldDescription className="mt-5 text-center text-xs leading-relaxed text-slate-500">
+      <FieldDescription className="mt-5 text-center text-xs leading-relaxed text-muted-foreground">
         By continuing, you agree to our{" "}
         <Link href="/terms" className="underline underline-offset-2">
           Terms
