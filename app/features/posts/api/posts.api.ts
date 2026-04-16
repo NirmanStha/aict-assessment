@@ -1,5 +1,9 @@
 import api from "@/lib/http";
-import type { PaginatedPostsResponse, Post } from "../types/posts.types";
+import type {
+  CreatePostPayload,
+  PaginatedPostsResponse,
+  Post,
+} from "../types/posts.types";
 
 export async function getPosts(
   limit = 12,
@@ -17,7 +21,7 @@ export async function getPostById(id: number): Promise<Post> {
   return response.data;
 }
 
-export async function createPost(postData: Omit<Post, "id">): Promise<Post> {
+export async function createPost(postData: CreatePostPayload): Promise<Post> {
   const response = await api.post<Post>("/posts/add", postData);
   return response.data;
 }

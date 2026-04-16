@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   createPostMutationOptions,
   deletePostMutationOptions,
@@ -53,8 +54,12 @@ export function useDeletePostMutation() {
 
   return useMutation({
     ...deletePostMutationOptions,
-    onSuccess: () => {
+    onSuccess: (_, deletedPostId) => {
       queryClient.invalidateQueries({ queryKey: postsKeys.all });
+      toast.success(`Post of id ${deletedPostId} deleted successfully`);
+    },
+    onError: () => {
+      toast.error("Failed to delete post. Please try again.");
     },
   });
 }

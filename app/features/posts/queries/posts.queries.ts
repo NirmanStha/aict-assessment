@@ -8,12 +8,16 @@ import {
   getPosts,
   updatePost,
 } from "../api/posts.api";
-import { Post } from "../types/posts.types";
+import { CreatePostPayload, Post } from "../types/posts.types";
 
 export function postsListQueryOptions(limit: number, skip: number) {
   return queryOptions({
     queryKey: postsKeys.list(limit, skip),
     queryFn: () => getPosts(limit, skip),
+    select: (response) => ({
+      ...response,
+      posts: response.posts.filter((post) => post.isDeleted !== true),
+    }),
   });
 }
 
@@ -30,10 +34,14 @@ export function paginatedPostsQueryOptions(page: number, pageSize: number) {
   return queryOptions({
     queryKey: postsKeys.list(pageSize, skip),
     queryFn: () => getPosts(pageSize, skip),
+    select: (response) => ({
+      ...response,
+      posts: response.posts.filter((post) => post.isDeleted !== true),
+    }),
   });
 }
 export const createPostMutationOptions = {
-  mutationFn: (postData: Omit<Post, "id">) => createPost(postData),
+  mutationFn: (postData: CreatePostPayload) => createPost(postData),
 };
 export const updatePostMutationOptions = {
   mutationFn: (data: { id: number; postData: Partial<Omit<Post, "id">> }) =>

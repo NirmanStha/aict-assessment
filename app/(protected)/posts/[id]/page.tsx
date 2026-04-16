@@ -5,9 +5,21 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
+  useDeletePostMutation,
   usePostQuery,
   useUpdatePostMutation,
 } from "@/app/features/posts/hooks/use-posts";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -17,6 +29,7 @@ export default function PostDetailPage() {
   const id = Number(params.id);
   const { data, isPending, isError } = usePostQuery(id);
   const { mutate: updatePost, isPending: isUpdating } = useUpdatePostMutation();
+  const { mutate: deletePost, isPending: isDeleting } = useDeletePostMutation();
 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -49,7 +62,7 @@ export default function PostDetailPage() {
       },
       {
         onSuccess: () => {
-          toast.success("Post saved");
+          toast.success("Post saved successfully");
           router.push("/posts");
         },
         onError: () => {
@@ -57,6 +70,14 @@ export default function PostDetailPage() {
         },
       },
     );
+  };
+
+  const handleDelete = () => {
+    deletePost(id, {
+      onSuccess: () => {
+        router.push("/posts");
+      },
+    });
   };
 
   if (isPending) {
@@ -117,10 +138,45 @@ export default function PostDetailPage() {
           />
         </div>
 
-        <div className="flex justify-end">
-          <Button type="button" disabled={isUpdating} onClick={handleSave}>
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            disabled={isUpdating || isDeleting}
+            onClick={handleSave}
+          >
             {isUpdating ? "Saving..." : "Save changes"}
           </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                variant="destructive"
+                disabled={isUpdating || isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeleting}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  disabled={isDeleting}
+                  onClick={handleDelete}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </article>

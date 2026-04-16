@@ -5,6 +5,8 @@ export interface Post {
   tags: string[];
   userId: number;
   views: number;
+  isDeleted?: boolean;
+  deletedOn?: string;
 }
 
 export interface PaginatedPostsResponse {

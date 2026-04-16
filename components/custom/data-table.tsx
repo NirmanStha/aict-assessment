@@ -3,6 +3,17 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -10,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Pen, Trash } from "lucide-react";
 
 export interface DataTableColumn<T> {
   key: string;
@@ -69,19 +81,43 @@ export function DataTable<T>({
                 <div className="flex items-center gap-2">
                   {getEditHref ? (
                     <Link href={getEditHref(row)}>
-                      <Button size="sm">Edit</Button>
+                      <Button>
+                        <Pen />
+                      </Button>
                     </Link>
                   ) : null}
                   {onDelete ? (
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      disabled={isDeleting}
-                      onClick={() => onDelete(row)}
-                    >
-                      Delete
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          disabled={isDeleting}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent size="sm">
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel disabled={isDeleting}>
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            variant="destructive"
+                            disabled={isDeleting}
+                            onClick={() => onDelete(row)}
+                          >
+                            {isDeleting ? "Deleting..." : "Delete"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   ) : null}
                 </div>
               </TableCell>
