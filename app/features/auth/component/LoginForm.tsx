@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +14,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { SignupNotSupportedDialog } from "./SignupNotSupportedDialog";
 import { useLoginMutation } from "../hooks/use-auth";
 
 export function LoginForm({
@@ -33,12 +33,12 @@ export function LoginForm({
   return (
     <div
       className={cn(
-        "rounded-2xl border w-125 border-border/80 bg-card/90 p-6  shadow-xl shadow-background backdrop-blur sm:p-8",
+        "w-125 rounded-2xl border border-border/80 bg-card/90 p-6 shadow-xl shadow-background backdrop-blur sm:p-8",
         className,
       )}
       {...props}
     >
-      <form className="space-y-5 min-w-80" onSubmit={handleSubmit}>
+      <form className="min-w-80 space-y-5" onSubmit={handleSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-3 text-center">
             <div className="flex size-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm">
@@ -95,13 +95,7 @@ export function LoginForm({
           </Field>
 
           <FieldDescription className="pt-1 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Create one
-            </Link>
+            Don&apos;t have an account? <SignupNotSupportedDialog />
           </FieldDescription>
         </FieldGroup>
       </form>

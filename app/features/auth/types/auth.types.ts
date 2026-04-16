@@ -16,6 +16,7 @@ export interface UserProfile {
   lastName?: string;
   image?: string;
   gender?: string;
+  tokenExpiresAt?: number;
 }
 
 export interface AuthTokens {

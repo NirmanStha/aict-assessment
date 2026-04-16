@@ -7,6 +7,18 @@ const DUMMYJSON_BASE =
 const ACCESS_COOKIE = "accessToken";
 const REFRESH_COOKIE = "refreshToken";
 
+function decodeTokenExpiry(token: string): number | undefined {
+  try {
+    const payload = JSON.parse(
+      Buffer.from(token.split(".")[1], "base64url").toString("utf-8"),
+    ) as { exp?: number };
+
+    return payload.exp ? payload.exp * 1000 : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function cookieOptions(maxAge: number) {
   return {
     httpOnly: true,
@@ -57,7 +69,10 @@ export async function GET() {
         return NextResponse.json(profile, { status: profileResponse.status });
       }
 
-      const res = NextResponse.json(profile);
+      const res = NextResponse.json({
+        ...profile,
+        tokenExpiresAt: decodeTokenExpiry(refreshed.accessToken),
+      });
       res.cookies.set(
         ACCESS_COOKIE,
         refreshed.accessToken,
@@ -95,7 +110,10 @@ export async function GET() {
         });
       }
 
-      const res = NextResponse.json(retriedProfile);
+      const res = NextResponse.json({
+        ...retriedProfile,
+        tokenExpiresAt: decodeTokenExpiry(refreshed.accessToken),
+      });
       res.cookies.set(
         ACCESS_COOKIE,
         refreshed.accessToken,
@@ -110,7 +128,13 @@ export async function GET() {
     }
 
     const profile = await profileResponse.json();
-    return NextResponse.json(profile, { status: profileResponse.status });
+    return NextResponse.json(
+      {
+        ...profile,
+        tokenExpiresAt: decodeTokenExpiry(accessToken as string),
+      },
+      { status: profileResponse.status },
+    );
   } catch {
     return NextResponse.json(
       { message: "Unable to fetch profile." },

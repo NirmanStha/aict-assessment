@@ -6,6 +6,18 @@ const DUMMYJSON_BASE =
 const ACCESS_COOKIE = "accessToken";
 const REFRESH_COOKIE = "refreshToken";
 
+function decodeTokenExpiry(token: string): number | undefined {
+  try {
+    const payload = JSON.parse(
+      Buffer.from(token.split(".")[1], "base64url").toString("utf-8"),
+    ) as { exp?: number };
+
+    return payload.exp ? payload.exp * 1000 : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function cookieOptions(maxAge: number) {
   return {
     httpOnly: true,
@@ -46,6 +58,7 @@ export async function POST(request: Request) {
         lastName: data.lastName,
         image: data.image,
         gender: data.gender,
+        tokenExpiresAt: decodeTokenExpiry(data.accessToken),
       },
       { status: 200 },
     );

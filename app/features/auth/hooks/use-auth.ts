@@ -56,6 +56,7 @@ export function useLoginMutation() {
         lastName: data.lastName,
         image: data.image,
         gender: data.gender,
+        tokenExpiresAt: data.tokenExpiresAt,
       };
 
       queryClient.setQueryData(authKeys.me(), profile);
