@@ -26,7 +26,7 @@ export function PaginationControls({
           {isFetching ? " • Updating..." : ""}
         </p>
 
-        <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-muted/40 p-1">
+        <div className="flex items-center gap-2 rounded-xl p-1">
           <Button
             type="button"
             variant="outline"

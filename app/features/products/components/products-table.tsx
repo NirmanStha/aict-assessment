@@ -108,21 +108,17 @@ export function ProductsTable() {
         Showing {rangeStart}-{rangeEnd} of {data.total} products from DummyJSON.
       </p>
 
-      {isFetching ? (
-        <DataTableSkeleton columnCount={productColumns.length} />
-      ) : (
-        <DataTable
-          data={data.products}
-          columns={productColumns}
-          getRowKey={(product) => product.id}
-          getEditHref={(product) => `/products/${product.id}`}
-          editActionLabel="Edit product"
-          onDelete={(product) => deleteProduct(product.id)}
-          deleteDialogTitle="Delete this product?"
-          deleteActionLabel="Delete"
-          isDeleting={isDeleting}
-        />
-      )}
+      <DataTable
+        data={data.products}
+        columns={productColumns}
+        getRowKey={(product) => product.id}
+        getEditHref={(product) => `/products/${product.id}`}
+        editActionLabel="Edit product"
+        onDelete={(product) => deleteProduct(product.id)}
+        deleteDialogTitle="Delete this product?"
+        deleteActionLabel="Delete"
+        isDeleting={isDeleting}
+      />
 
       <PaginationControls
         page={page}
