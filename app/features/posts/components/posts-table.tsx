@@ -104,18 +104,14 @@ export function PostsTable() {
         Showing {rangeStart}-{rangeEnd} of {data.total} posts from DummyJSON.
       </p>
 
-      {isFetching ? (
-        <DataTableSkeleton columnCount={postColumns.length} />
-      ) : (
-        <DataTable
-          data={data.posts}
-          columns={postColumns}
-          getRowKey={(post) => post.id}
-          getEditHref={(post) => `/posts/${post.id}`}
-          onDelete={(post) => deletePost(post.id)}
-          isDeleting={isDeleting}
-        />
-      )}
+      <DataTable
+        data={data.posts}
+        columns={postColumns}
+        getRowKey={(post) => post.id}
+        getEditHref={(post) => `/posts/${post.id}`}
+        onDelete={(post) => deletePost(post.id)}
+        isDeleting={isDeleting}
+      />
 
       <PaginationControls
         page={page}

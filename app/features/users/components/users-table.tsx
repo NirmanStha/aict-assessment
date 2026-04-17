@@ -107,21 +107,17 @@ export function UsersTable() {
         Showing {rangeStart}-{rangeEnd} of {data.total} users from DummyJSON.
       </p>
 
-      {isFetching ? (
-        <DataTableSkeleton columnCount={userColumns.length} />
-      ) : (
-        <DataTable
-          data={data.users}
-          columns={userColumns}
-          getRowKey={(user) => user.id}
-          getEditHref={(user) => `/users/${user.id}`}
-          editActionLabel="Edit user"
-          onDelete={(user) => deleteUser(user.id)}
-          deleteDialogTitle="Delete this user?"
-          deleteActionLabel="Delete"
-          isDeleting={isDeleting}
-        />
-      )}
+      <DataTable
+        data={data.users}
+        columns={userColumns}
+        getRowKey={(user) => user.id}
+        getEditHref={(user) => `/users/${user.id}`}
+        editActionLabel="Edit user"
+        onDelete={(user) => deleteUser(user.id)}
+        deleteDialogTitle="Delete this user?"
+        deleteActionLabel="Delete"
+        isDeleting={isDeleting}
+      />
 
       <PaginationControls
         page={page}
