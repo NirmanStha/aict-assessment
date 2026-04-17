@@ -100,7 +100,7 @@ run "npm run build" to build the project
 ## Submission notes
 
 GitHub repository link:
-Add your repository URL before submission.
+https://github.com/NirmanStha/aict-assessment/
 
 Deployed application link:
-Add your deployed URL before submission.
+https://aict-assessment-blscpjjhd-nirmansthas-projects.vercel.app/
