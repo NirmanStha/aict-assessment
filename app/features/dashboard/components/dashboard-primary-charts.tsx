@@ -23,6 +23,8 @@ type DashboardPrimaryChartsProps = {
   metrics: DashboardMetrics;
 };
 
+const BAR_COLOR = "#bfdbfe";
+
 export function DashboardPrimaryCharts({
   isLoading,
   metrics,
@@ -56,11 +58,7 @@ export function DashboardPrimaryCharts({
                   cursor={false}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="views"
-                  fill="var(--color-views)"
-                  radius={[6, 6, 0, 0]}
-                />
+                <Bar dataKey="views" fill={BAR_COLOR} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ChartContainer>
           )}
@@ -97,11 +95,7 @@ export function DashboardPrimaryCharts({
                   cursor={false}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="count"
-                  fill="var(--color-count)"
-                  radius={[6, 6, 0, 0]}
-                />
+                <Bar dataKey="count" fill={BAR_COLOR} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ChartContainer>
           )}

@@ -1,4 +1,5 @@
-import { Cell, Pie, PieChart } from "recharts";
+import type { ComponentProps } from "react";
+import { Pie, PieChart, Sector } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -23,13 +24,16 @@ type DashboardSecondarySectionProps = {
   metrics: DashboardMetrics;
 };
 
-const PIE_COLORS = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-];
+const PIE_COLORS = ["#93c5fd", "#86efac", "#f9a8d4", "#fde68a", "#c4b5fd"];
+
+type PieShapeProps = ComponentProps<typeof Sector> & {
+  index?: number;
+};
+
+function renderAgeMixShape(props: PieShapeProps) {
+  const color = PIE_COLORS[(props.index ?? 0) % PIE_COLORS.length];
+  return <Sector {...props} fill={color} />;
+}
 
 export function DashboardSecondarySection({
   isLoading,
@@ -59,14 +63,8 @@ export function DashboardSecondarySection({
                   innerRadius={55}
                   outerRadius={85}
                   strokeWidth={2}
-                >
-                  {metrics.ageMixData.map((segment, index) => (
-                    <Cell
-                      key={segment.range}
-                      fill={PIE_COLORS[index % PIE_COLORS.length]}
-                    />
-                  ))}
-                </Pie>
+                  shape={renderAgeMixShape}
+                />
               </PieChart>
             </ChartContainer>
           )}
